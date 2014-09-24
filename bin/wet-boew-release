@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'wet-boew-release';
+
+var release = require('../lib/release');
+
+release();
