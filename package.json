@@ -1,0 +1,22 @@
+{
+  "name": "wet-boew-release",
+  "version": "0.0.0",
+  "description": "Automation for the Web Experience Toolkit release process",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wet-boew/wet-boew-release.git"
+  },
+  "author": {
+    "name": "Laurent Goderre",
+    "url": "https://github.com/LaurentGoderre"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wet-boew/wet-boew-release/issues"
+  },
+  "homepage": "https://github.com/wet-boew/wet-boew-release"
+}
