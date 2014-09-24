@@ -1,0 +1,7 @@
+{
+  "name": "theme-base",
+  "version": "4.0.1-development",
+  "devDependencies": {
+    "wet-boew": "https://github.com/wet-boew/wet-boew.git#master"
+  }
+}

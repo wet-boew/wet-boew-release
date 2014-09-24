@@ -1,0 +1,8 @@
+{
+  "name": "theme-base",
+  "version": "4.0.1-development",
+  "repository": {
+    "type": "git",
+    "url": "../../upstream/theme"
+  }
+}
