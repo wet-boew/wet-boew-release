@@ -1,56 +1,144 @@
+var path = require('path');
 var fs = require('fs');
 var expect = require('expect.js');
-var ncp = require('ncp').ncp;
-var rimraf = require('rimraf');
+var Q = require('q');
 var git = require('../lib/helpers/git');
 var release = require('../lib/release');
+var paths = require('./paths');
 
 describe('Core Release Process', function () {
-	var testFolder = './test',
-		initialFolder = testFolder + '/initial',
-		originFolder = testFolder + '/origin',
-		upstreamFolder = testFolder + '/upstream',
-		originPath = originFolder + '/core',
+	var originPath = paths.originFolder + '/core',
 		origin = new git(originPath),
-		upstreamPath = upstreamFolder + '/core',
-		upstream = new git(upstreamPath);
+		upstreamPath = paths.upstreamFolder + '/core',
+		upstream = new git(upstreamPath),
+		localBranchName, callback;
 
-	before(function( done ) {
-		var error = function(error){
-			done(error);
-		};
+	var error = function(error) {
+		if (callback) {
+			callback(error);
+		}
+	};
 
-		ncp(initialFolder, originFolder, function(err) {
-			if (err) {
-				return console.error(err);
-			}
+	before(function(done) {
+		callback = done;
 
-			try {
-				fs.mkdirSync(upstreamFolder);
-			} catch (err) {
-			} finally {
-				fs.mkdirSync(upstreamPath);
-			}
+		fs.mkdirSync(upstreamPath);
 
-			upstream.create(true)
-			.then(function(){
-				return origin.create();
-			}, error)
-			.then(function(){
-				return origin.exec('push', upstream.cwd, 'master');
-			}, error)
-			.then(function(){
-				release(origin, done);
-			}, error);
+		upstream.create(true)
+		.then(function(stdout, sterr) {
+			return origin.create();
+		}, error)
+		.then(function() {
+			return origin.exec('push', upstream.cwd, 'master');
+		}, error)
+		.then(function() {
+			var deferred = Q.defer(),
+			deferedCallback = function(err) {
+				if (err) {
+					return deferred.reject(err);
+				}
+
+				return deferred.resolve();
+			};
+			release(origin, deferedCallback);
+
+			return deferred.promise;
+		}, error)
+		.then(function() {
+			return origin.exec('branch');
+		}, error).then(function(stdout) {
+			localBranchName = stdout.match(/\*\s*([^\n]*)/)[1];
+			callback();
+		}, error);
+	});
+
+	it('Creates a commit for the new version', function(done) {
+		callback = done;
+
+		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
+		.then(function(stdout) {
+			expect(stdout).to.contain('Updated files for the v4.0.1 maintenance release');
+			callback();
+		}, error);
+	});
+
+	it('Updates the version number in package.json and bower.json for the release', function(done) {
+		callback = done;
+
+		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
+		.then(function(stdout) {
+			var commitNumber = stdout.match(/commit ([^\n]*)/)[1];
+
+			return origin.exec('checkout', commitNumber);
+		}, error)
+		.then(function() {
+			var pkg = JSON.parse(fs.readFileSync(path.join(origin.cwd + '/package.json'))),
+				bower = JSON.parse(fs.readFileSync(path.join(origin.cwd + '/bower.json')));
+
+			expect(pkg.version).to.be('4.0.1');
+			expect(bower.version).to.be('4.0.1');
+			callback();
 		});
 	});
 
-	after(function(){
-		rimraf.sync(originFolder);
-		rimraf.sync(upstreamFolder);
+	it('Creates a tag for the release', function(done) {
+		callback = done;
+
+		origin.exec('tag', '-l', '-n')
+		.then(function(stdout) {
+			expect(stdout).to.contain('v4.0.1');
+			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
+			callback();
+		}, error);
 	});
 
-	it('runs', function() {
-		expect(true).to.be(true);
+	it('Creates a commit for the new development version', function(done) {
+		callback = done;
+
+		origin.exec('log', localBranchName + '~1..' + localBranchName)
+		.then(function(stdout) {
+			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
+			callback();
+		}, error);
+	});
+
+	it('Updates the version number in package.json and bower.json for the development version', function(done) {
+		callback = done;
+
+		origin.exec('log', localBranchName + '~1..' + localBranchName)
+		.then(function(stdout) {
+			var commitNumber = stdout.match(/commit ([^\n]*)/)[1];
+
+			return origin.exec('checkout', commitNumber);
+		}, error)
+		.then(function() {
+			var pkg = JSON.parse(fs.readFileSync(path.join(origin.cwd + '/package.json'))),
+				bower = JSON.parse(fs.readFileSync(path.join(origin.cwd + '/bower.json')));
+
+			expect(pkg.version).to.be('4.0.2-development');
+			expect(bower.version).to.be('4.0.2-development');
+			callback();
+		});
+	});
+
+	it('Pushes the release branch upstream', function(done) {
+		callback = done;
+
+		upstream.exec('log', 'master')
+		.then(function(stdout) {
+			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
+			callback();
+		}, error);
+	});
+
+	it('Pushes the tag upstream', function(done) {
+		callback = done;
+
+		upstream.exec('tag', '-l', '-n')
+		.then(function(stdout) {
+			expect(stdout).to.contain('v4.0.1');
+			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
+			callback();
+		}, error);
 	});
 });
