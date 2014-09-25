@@ -11,7 +11,8 @@ describe('Core Release Process', function () {
 		origin = new git(originPath),
 		upstreamPath = paths.upstreamFolder + '/core',
 		upstream = new git(upstreamPath),
-		localBranchName, callback;
+		currentBranchRegexp = /\*\s*([^\n]*)/,
+		localBranchName, callback, r;
 
 	var error = function(error) {
 		if (callback) {
@@ -40,14 +41,14 @@ describe('Core Release Process', function () {
 
 				return deferred.resolve();
 			};
-			release(origin, deferedCallback);
+			r = release(origin, deferedCallback, false);
 
 			return deferred.promise;
 		}, error)
 		.then(function() {
 			return origin.exec('branch');
 		}, error).then(function(stdout) {
-			localBranchName = stdout.match(/\*\s*([^\n]*)/)[1];
+			localBranchName = stdout.match(currentBranchRegexp)[1];
 			callback();
 		}, error);
 	});
@@ -140,5 +141,21 @@ describe('Core Release Process', function () {
 			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
 			callback();
 		}, error);
+	});
+
+	it('Cleans up after the release', function(done) {
+		callback = done;
+
+		r.cleanup(function() {
+			return origin.exec('branch')
+			.then(function(stdout) {
+				var branch = stdout.match(currentBranchRegexp)[1];
+
+				expect(branch).to.be('master');
+				expect(stdout).to.not.contain(localBranchName);
+
+				callback();
+			}, error);
+		});
 	});
 });
