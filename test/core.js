@@ -1,3 +1,4 @@
+var fs = require('fs');
 var expect = require('expect.js');
 var ncp = require('ncp').ncp;
 var rimraf = require('rimraf');
@@ -15,24 +16,32 @@ describe('Core Release Process', function () {
 		upstream = new git(upstreamPath);
 
 	before(function( done ) {
+		var error = function(error){
+			done(error);
+		};
+
 		ncp(initialFolder, originFolder, function(err) {
 			if (err) {
 				return console.error(err);
 			}
 
-			ncp(initialFolder, upstreamFolder, function(err) {
-				if (err) {
-					return console.error(err);
-				}
+			try {
+				fs.mkdirSync(upstreamFolder);
+			} catch (err) {
+			} finally {
+				fs.mkdirSync(upstreamPath);
+			}
 
-				upstream.create()
-				.then(function(){
-					return origin.create();
-				})
-				.then(function(){
-					release(originPath, done);
-				});
-			});
+			upstream.create(true)
+			.then(function(){
+				return origin.create();
+			}, error)
+			.then(function(){
+				return origin.exec('push', upstream.cwd, 'master');
+			}, error)
+			.then(function(){
+				release(origin, done);
+			}, error);
 		});
 	});
 
