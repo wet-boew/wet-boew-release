@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/wet-boew/wet-boew-release",
   "dependencies": {
+    "chalk": "^0.5.1",
     "node-uuid": "^1.4.1",
     "q": "^1.0.1",
     "rimraf": "^2.2.8"

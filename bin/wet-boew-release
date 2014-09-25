@@ -4,6 +4,22 @@
 
 process.title = 'wet-boew-release';
 
+var chalk = require('chalk');
+var git = require('../lib/helpers/git');
 var release = require('../lib/release');
 
-release();
+var working = new git(process.cwd());
+
+working.exec('status')
+.then(function(stdout, stderr) {
+	release(working, function(err) {
+		if (err) {
+			console.error(chalk.red(err));
+			process.exit(1);
+		}
+		console.log(chalk.green('All done!'));
+	});
+}, function(err) {
+	console.error(chalk.red('Not a valid git repository. Pease try again in a valid git repository'));
+	process.exit(1);
+});
