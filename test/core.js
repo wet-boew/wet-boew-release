@@ -59,6 +59,8 @@ describe('Core Release Process', function () {
 		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
 		.then(function(stdout) {
 			expect(stdout).to.contain('Updated files for the v4.0.1 maintenance release');
+		}, error)
+		.then(function(){
 			callback();
 		}, error);
 	});
@@ -78,8 +80,10 @@ describe('Core Release Process', function () {
 
 			expect(pkg.version).to.be('4.0.1');
 			expect(bower.version).to.be('4.0.1');
+		}, error)
+		.then(function(){
 			callback();
-		});
+		}, error);
 	});
 
 	it('Creates a tag for the release', function(done) {
@@ -89,6 +93,8 @@ describe('Core Release Process', function () {
 		.then(function(stdout) {
 			expect(stdout).to.contain('v4.0.1');
 			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
+		}, error)
+		.then(function(){
 			callback();
 		}, error);
 	});
@@ -99,6 +105,8 @@ describe('Core Release Process', function () {
 		origin.exec('log', localBranchName + '~1..' + localBranchName)
 		.then(function(stdout) {
 			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
+		}, error)
+		.then(function(){
 			callback();
 		}, error);
 	});
@@ -118,8 +126,10 @@ describe('Core Release Process', function () {
 
 			expect(pkg.version).to.be('4.0.2-development');
 			expect(bower.version).to.be('4.0.2-development');
+		}, error)
+		.then(function(){
 			callback();
-		});
+		}, error);
 	});
 
 	it('Pushes the release branch upstream', function(done) {
@@ -128,6 +138,8 @@ describe('Core Release Process', function () {
 		upstream.exec('log', 'master')
 		.then(function(stdout) {
 			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
+		}, error)
+		.then(function(){
 			callback();
 		}, error);
 	});
@@ -139,6 +151,8 @@ describe('Core Release Process', function () {
 		.then(function(stdout) {
 			expect(stdout).to.contain('v4.0.1');
 			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
+		}, error)
+		.then(function(){
 			callback();
 		}, error);
 	});
@@ -153,9 +167,10 @@ describe('Core Release Process', function () {
 
 				expect(branch).to.be('master');
 				expect(stdout).to.not.contain(localBranchName);
-
-				callback();
-			}, error);
+		}, error)
+		.then(function(){
+			callback();
+		}, error);
 		});
 	});
 });
