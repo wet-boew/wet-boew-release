@@ -5,6 +5,7 @@ var paths = require('./paths');
 
 require('./core');
 require('./theme');
+require('./cli');
 
 before(function(done) {
 	ncp(paths.initialFolder, paths.originFolder, function(err) {
