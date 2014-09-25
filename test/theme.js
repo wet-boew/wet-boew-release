@@ -59,10 +59,10 @@ describe('Themes Release Process', function () {
 		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
 		.then(function(stdout) {
 			expect(stdout).to.contain('Updated files for the v4.0.1 maintenance release');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Updates the version number in package.json and bower.json for the release', function(done) {
@@ -80,10 +80,10 @@ describe('Themes Release Process', function () {
 
 			expect(pkg.version).to.be('4.0.1');
 			expect(bower.version).to.be('4.0.1');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Updates the WET core dependency for the release', function() {
@@ -98,10 +98,10 @@ describe('Themes Release Process', function () {
 		.then(function(stdout) {
 			expect(stdout).to.contain('v4.0.1');
 			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Creates a commit for the new development version', function(done) {
@@ -110,10 +110,10 @@ describe('Themes Release Process', function () {
 		origin.exec('log', localBranchName + '~1..' + localBranchName)
 		.then(function(stdout) {
 			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Updates the version number in package.json and bower.json for the development version', function(done) {
@@ -131,10 +131,10 @@ describe('Themes Release Process', function () {
 
 			expect(pkg.version).to.be('4.0.2-development');
 			expect(bower.version).to.be('4.0.2-development');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Updates the WET core dependency for the development version', function() {
@@ -148,10 +148,10 @@ describe('Themes Release Process', function () {
 		upstream.exec('log', 'master')
 		.then(function(stdout) {
 			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Pushes the tag upstream', function(done) {
@@ -161,10 +161,10 @@ describe('Themes Release Process', function () {
 		.then(function(stdout) {
 			expect(stdout).to.contain('v4.0.1');
 			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
-		}, error)
-		.then(function(){
+
 			callback();
-		}, error);
+		}, error)
+		.then(null, error);
 	});
 
 	it('Cleans up after the release', function(done) {
@@ -177,10 +177,10 @@ describe('Themes Release Process', function () {
 
 				expect(branch).to.be('master');
 				expect(stdout).to.not.contain(localBranchName);
-			}, error)
-			.then(function(){
+
 				callback();
-			}, error);
+			}, error)
+			.then(null, error);
 		});
 	});
 });
