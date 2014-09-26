@@ -5,8 +5,16 @@
 process.title = 'wet-boew-release';
 
 var chalk = require('chalk');
+var nopt = require('nopt');
 var git = require('../lib/helpers/git');
 var release = require('../lib/release');
+
+var options = nopt({'version': Boolean}, {'v': '--version'});
+
+if (options.version) {
+	process.stdout.write(require('../package.json').version + '\n');
+    process.exit();
+}
 
 var working = new git(process.cwd());
 
