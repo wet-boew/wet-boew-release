@@ -1,8 +1,8 @@
 # Web Experience Toolkit (WET) Release Module
 
 [![Build Status](https://secure.travis-ci.org/wet-boew/wet-boew.svg?branch=master)](http://travis-ci.org/wet-boew/wet-boew-release)
-[![dependency Status](https://david-dm.org/wet-boew/wet-boew/status.svg)](https://david-dm.org/wet-boew/wet-boew-release)
-[![devDependency Status](https://david-dm.org/wet-boew/wet-boew/dev-status.svg)](https://david-dm.org/wet-boew/wet-boew-release#info=devDependencies)
+[![dependency Status](https://david-dm.org/wet-boew/wet-boew-release/status.svg)](https://david-dm.org/wet-boew/wet-boew-release)
+[![devDependency Status](https://david-dm.org/wet-boew/wet-boew-release/dev-status.svg)](https://david-dm.org/wet-boew/wet-boew-release#info=devDependencies)
 
 This module helps automate the release process for the Web Experience Toolkit core and themes.
 
