@@ -2,17 +2,15 @@ var path = require('path');
 var fs = require('fs');
 var expect = require('expect.js');
 var Q = require('q');
-var git = require('../lib/helpers/git');
+var Git = require('node-git-simple');
 var release = require('../lib/release');
 var paths = require('./paths');
 
 describe('Core Release Process', function () {
 	var originPath = paths.originFolder + '/core',
-		origin = new git(originPath),
 		upstreamPath = paths.upstreamFolder + '/core',
-		upstream = new git(upstreamPath),
 		currentBranchRegexp = /\*\s*([^\n]*)/,
-		localBranchName, callback, r;
+		upstream, origin, localBranchName, callback, r;
 
 	var error = function(error) {
 		if (callback) {
@@ -25,11 +23,13 @@ describe('Core Release Process', function () {
 
 		fs.mkdirSync(upstreamPath);
 
-		upstream.create(true)
-		.then(function(stdout, sterr) {
-			return origin.create();
+		Git.create(upstreamPath, true)
+		.then(function(repo) {
+			upstream = repo;
+			return Git.create(originPath);
 		}, error)
-		.then(function() {
+		.then(function(repo) {
+			origin = repo;
 			return origin.exec('push', upstream.cwd, 'master');
 		}, error)
 		.then(function() {
@@ -47,8 +47,8 @@ describe('Core Release Process', function () {
 		}, error)
 		.then(function() {
 			return origin.exec('branch');
-		}, error).then(function(stdout) {
-			localBranchName = stdout.match(currentBranchRegexp)[1];
+		}, error).then(function(repo) {
+			localBranchName = repo.lastCommand.stdout.match(currentBranchRegexp)[1];
 			callback();
 		}, error);
 	});
@@ -57,8 +57,8 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
-		.then(function(stdout) {
-			expect(stdout).to.contain('Updated files for the v4.0.1 maintenance release');
+		.then(function(repo) {
+			expect(repo.lastCommand.stdout).to.contain('Updated files for the v4.0.1 maintenance release');
 
 			callback();
 		}, error)
@@ -69,8 +69,8 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
-		.then(function(stdout) {
-			var commitNumber = stdout.match(/commit ([^\n]*)/)[1];
+		.then(function(repo) {
+			var commitNumber = repo.lastCommand.stdout.match(/commit ([^\n]*)/)[1];
 
 			return origin.exec('checkout', commitNumber);
 		}, error)
@@ -90,9 +90,9 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		origin.exec('tag', '-l', '-n')
-		.then(function(stdout) {
-			expect(stdout).to.contain('v4.0.1');
-			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
+		.then(function(repo) {
+			expect(repo.lastCommand.stdout).to.contain('v4.0.1');
+			expect(repo.lastCommand.stdout).to.contain('Source files for the v4.0.1 maintenance release');
 
 			callback();
 		}, error)
@@ -103,8 +103,8 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		origin.exec('log', localBranchName + '~1..' + localBranchName)
-		.then(function(stdout) {
-			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
+		.then(function(repo) {
+			expect(repo.lastCommand.stdout).to.contain('Updated the build version to v4.0.2-development');
 
 			callback();
 		}, error)
@@ -115,8 +115,8 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		origin.exec('log', localBranchName + '~1..' + localBranchName)
-		.then(function(stdout) {
-			var commitNumber = stdout.match(/commit ([^\n]*)/)[1];
+		.then(function(repo) {
+			var commitNumber = repo.lastCommand.stdout.match(/commit ([^\n]*)/)[1];
 
 			return origin.exec('checkout', commitNumber);
 		}, error)
@@ -136,8 +136,8 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		upstream.exec('log', 'master')
-		.then(function(stdout) {
-			expect(stdout).to.contain('Updated the build version to v4.0.2-development');
+		.then(function(repo) {
+			expect(repo.lastCommand.stdout).to.contain('Updated the build version to v4.0.2-development');
 
 			callback();
 		}, error)
@@ -148,9 +148,9 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		upstream.exec('tag', '-l', '-n')
-		.then(function(stdout) {
-			expect(stdout).to.contain('v4.0.1');
-			expect(stdout).to.contain('Source files for the v4.0.1 maintenance release');
+		.then(function(repo) {
+			expect(repo.lastCommand.stdout).to.contain('v4.0.1');
+			expect(repo.lastCommand.stdout).to.contain('Source files for the v4.0.1 maintenance release');
 
 			callback();
 		}, error)
@@ -162,11 +162,11 @@ describe('Core Release Process', function () {
 
 		r.cleanup(function() {
 			return origin.exec('branch')
-			.then(function(stdout) {
-				var branch = stdout.match(currentBranchRegexp)[1];
+			.then(function(repo) {
+				var branch = repo.lastCommand.stdout.match(currentBranchRegexp)[1];
 
 				expect(branch).to.be('master');
-				expect(stdout).to.not.contain(localBranchName);
+				expect(repo.lastCommand.stdout).to.not.contain(localBranchName);
 
 				callback();
 			}, error)

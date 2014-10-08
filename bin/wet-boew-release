@@ -6,7 +6,7 @@ process.title = 'wet-boew-release';
 
 var chalk = require('chalk');
 var nopt = require('nopt');
-var git = require('../lib/helpers/git');
+var Git = require('node-git-simple');
 var release = require('../lib/release');
 
 var options = nopt({'version': Boolean}, {'v': '--version'});
@@ -16,11 +16,11 @@ if (options.version) {
     process.exit();
 }
 
-var working = new git(process.cwd());
+var working = new Git(process.cwd());
 
 working.exec('status')
-.then(function(stdout, stderr) {
-	release(working, function(err) {
+.then(function(repo) {
+	release(repo, function(err) {
 		if (err) {
 			console.error(chalk.red(err));
 			process.exit(1);

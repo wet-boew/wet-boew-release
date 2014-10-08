@@ -1,14 +1,14 @@
 var cp = require('child_process');
 var fs = require('fs');
 var expect = require('expect.js');
-var git = require('../lib/helpers/git');
+var Git = require('node-git-simple');
 var paths = require('./paths');
 
 describe('CLI', function () {
     var originPath = paths.originFolder + '/core',
-        origin = new git(originPath),
+        origin = new Git(originPath),
         upstreamPath = paths.upstreamFolder + '/core',
-        upstream = new git(upstreamPath),
+        upstream = new Git(upstreamPath),
         currentBranchRegexp = /\*\s*([^\n]*)/,
         callback;
 
@@ -41,8 +41,8 @@ describe('CLI', function () {
         callback = done;
 
         upstream.exec('log')
-        .then(function(stdout) {
-            expect(stdout).to.contain('Updated the build version to v4.0.3-development');
+        .then(function(repo) {
+            expect(repo.lastCommand.stdout).to.contain('Updated the build version to v4.0.3-development');
             callback();
         }, error)
         .then(null, error);
@@ -52,8 +52,8 @@ describe('CLI', function () {
         callback = done;
 
         origin.exec('branch')
-        .then(function(stdout) {
-            var branch = stdout.match(currentBranchRegexp)[1];
+        .then(function(repo) {
+            var branch = repo.lastCommand.stdout.match(currentBranchRegexp)[1];
 
             expect(branch).to.be('master');
 
