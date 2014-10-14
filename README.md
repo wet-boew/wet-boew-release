@@ -1,6 +1,6 @@
 # Web Experience Toolkit (WET) Release Module
 
-[![Build Status](https://secure.travis-ci.org/wet-boew/wet-boew.svg?branch=master)](http://travis-ci.org/wet-boew/wet-boew-release)
+[![Build Status](https://secure.travis-ci.org/wet-boew/wet-boew-release.svg?branch=master)](http://travis-ci.org/wet-boew/wet-boew-release)
 [![dependency Status](https://david-dm.org/wet-boew/wet-boew-release/status.svg)](https://david-dm.org/wet-boew/wet-boew-release)
 [![devDependency Status](https://david-dm.org/wet-boew/wet-boew-release/dev-status.svg)](https://david-dm.org/wet-boew/wet-boew-release#info=devDependencies)
 
