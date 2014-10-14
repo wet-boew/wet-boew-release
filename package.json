@@ -37,5 +37,9 @@
   },
   "bin": {
     "wet-boew-release": "bin/wet-boew-release"
-  }
+  },
+  "files": [
+    "bin",
+    "lib"
+  ]
 }
