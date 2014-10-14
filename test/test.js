@@ -8,7 +8,7 @@ require('./theme');
 require('./cli');
 
 before(function(done) {
-	ncp(paths.initialFolder, paths.originFolder, function(err) {
+	ncp(paths.fixturesFolder, paths.originFolder, function(err) {
 		if (err) {
 			done(err);
 		}
