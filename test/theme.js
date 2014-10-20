@@ -68,9 +68,9 @@ describe('Themes Release Process', function () {
 	it('Updates the version number in package.json and bower.json for the release', function(done) {
 		callback = done;
 
-		origin.exec('log', localBranchName + '~2..' + localBranchName +'~1')
+		origin.exec('rev-parse', localBranchName + '~1')
 		.then(function(repo) {
-			var commitNumber = repo.lastCommand.stdout.match(/commit ([^\n]*)/)[1];
+			var commitNumber = repo.lastCommand.stdout.replace('\n', '');
 
 			return origin.exec('checkout', commitNumber);
 		}, error)
@@ -119,9 +119,9 @@ describe('Themes Release Process', function () {
 	it('Updates the version number in package.json and bower.json for the development version', function(done) {
 		callback = done;
 
-		origin.exec('log', localBranchName + '~1..' + localBranchName)
+		origin.exec('rev-parse', localBranchName)
 		.then(function(repo) {
-			var commitNumber = repo.lastCommand.stdout.match(/commit ([^\n]*)/)[1];
+			var commitNumber = repo.lastCommand.stdout.replace('\n', '');
 
 			return origin.exec('checkout', commitNumber);
 		}, error)
