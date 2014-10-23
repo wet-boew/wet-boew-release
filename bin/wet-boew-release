@@ -20,13 +20,17 @@ var working = new Git(process.cwd());
 
 working.exec('status')
 .then(function(repo) {
-	release(repo, function(err) {
-		if (err) {
-			console.error(chalk.red(err));
-			process.exit(1);
-		}
-		console.log(chalk.green('All done!'));
-	});
+	try{
+		release(repo, function(err) {
+			if (err) {
+				console.error(chalk.red(err));
+				process.exit(1);
+			}
+			console.log(chalk.green('All done!'));
+		});
+	} catch(err) {
+		console.log(chalk.red(err));
+	}
 }, function(err) {
 	console.error(chalk.red('Not a valid git repository. Pease try again in a valid git repository'));
 	process.exit(1);
