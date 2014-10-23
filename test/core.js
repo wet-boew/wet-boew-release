@@ -69,7 +69,7 @@ describe('Core Release Process', function () {
 		callback = done;
 
 		origin.exec('rev-parse', localBranchName + '~1')
-		.then(function(repo) {console.log(repo.lastCommand.stdout);
+		.then(function(repo) {
 			var commitNumber = repo.lastCommand.stdout.replace('\n', '');
 
 			return origin.exec('checkout', commitNumber);
