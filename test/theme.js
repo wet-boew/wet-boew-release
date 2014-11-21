@@ -123,6 +123,18 @@ describe('Themes Release Process', function () {
 			.then(null, error);
 		});
 
+		it('Tells the CI to skip the development version commit', function(done) {
+			callback = done;
+
+			origin.exec('log', localBranchName + '~1..' + localBranchName)
+			.then(function(repo) {
+				expect(repo.lastCommand.stdout).to.contain('[ci skip]');
+
+				callback();
+			}, error)
+			.then(null, error);
+		});
+
 		it('Updates the version number in package.json and bower.json for the development version', function(done) {
 			callback = done;
 
@@ -289,6 +301,18 @@ describe('Themes Release Process', function () {
 			origin.exec('log', localBranchName + '~1..' + localBranchName)
 			.then(function(repo) {
 				expect(repo.lastCommand.stdout).to.contain('Updated the build version to v4.0.2-development');
+
+				callback();
+			}, error)
+			.then(null, error);
+		});
+
+		it('Tells the CI to skip the development version commit', function(done) {
+			callback = done;
+
+			origin.exec('log', localBranchName + '~1..' + localBranchName)
+			.then(function(repo) {
+				expect(repo.lastCommand.stdout).to.contain('[ci skip]');
 
 				callback();
 			}, error)
