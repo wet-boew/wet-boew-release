@@ -1,6 +1,6 @@
 {
   "name": "wet-boew-release",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Automation for the Web Experience Toolkit release process",
   "scripts": {
     "test": "grunt test"
