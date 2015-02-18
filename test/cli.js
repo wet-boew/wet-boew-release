@@ -6,11 +6,9 @@ var paths = require('./paths');
 
 describe('CLI', function () {
     var originPath = paths.originFolder + '/core',
-        origin = new Git(originPath),
         upstreamPath = paths.upstreamFolder + '/core',
-        upstream = new Git(upstreamPath),
         currentBranchRegexp = /\*\s*([^\n]*)/,
-        callback;
+        origin, upstream, callback;
 
     var error = function(error) {
         if (callback) {
@@ -22,6 +20,9 @@ describe('CLI', function () {
         callback = done;
 
         var remote = JSON.parse(fs.readFileSync(originPath + '/package.json')).repository.url;
+
+	origin = new Git(originPath);
+	upstream = new Git(upstreamPath);
 
         origin.exec('pull', remote, 'master')
         .then(function() {
