@@ -22,7 +22,7 @@ working.exec('status')
 .then(function(repo) {
 	release(repo, function(err) {
 		if (err) {
-			console.error(chalk.red(err + '\n' + err.stderr ||err.stdout));
+			console.error(chalk.red(err + '\n' + err.stderr || err.stdout));
 			process.exit(1);
 		}
 		console.log(chalk.green('All done!'));
