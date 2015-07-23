@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/wet-boew/wet-boew-release",
   "dependencies": {
-    "chalk": "^0.5.1",
+    "chalk": "^1.1.0",
     "node-git-simple": "^0.1.2",
     "node-uuid": "^1.4.1",
     "nopt": "^3.0.1",
