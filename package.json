@@ -19,8 +19,8 @@
   },
   "homepage": "https://github.com/wet-boew/wet-boew-release",
   "dependencies": {
-    "chalk": "^0.5.1",
-    "node-git-simple": "wet-boew/node-git-simple#v0.1.2",
+    "chalk": "^1.1.0",
+    "node-git-simple": "^0.1.2",
     "node-uuid": "^1.4.1",
     "nopt": "^3.0.1",
     "q": "^1.0.1",
@@ -29,11 +29,11 @@
   "devDependencies": {
     "expect.js": "^0.3.1",
     "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-jshint": "^0.11.2",
     "grunt-simple-mocha": "^0.4.0",
-    "load-grunt-tasks": "^0.6.0",
-    "mocha": "^1.21.4",
-    "ncp": "^1.0.0"
+    "load-grunt-tasks": "^3.2.0",
+    "mocha": "^2.2.5",
+    "ncp": "^2.0.0"
   },
   "bin": {
     "wet-boew-release": "bin/wet-boew-release"
